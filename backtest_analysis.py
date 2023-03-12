@@ -4,12 +4,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
+from PIL import Image
+
 
 
 
 st.set_page_config(layout="wide",page_icon="🧊",initial_sidebar_state="auto")
 st.set_option('deprecation.showPyplotGlobalUse', False)
-
 
 st.sidebar.title("Stock Backtest Anlaysis")
 st.sidebar.image('https://cdn.corporatefinanceinstitute.com/assets/backtesting1.jpeg')
@@ -58,9 +59,8 @@ if option == 'General Analysis':
 
 
 elif option == 'Conditional Anlaysis':
-	st.title("General Analysis")
-	st.subheader("Coming Soon... !!")
-	st.subheader("Group By Analysis")
+	st.title("Conditional Analysis")
+	st.subheader("Add Group By msethods")
 
 
 else:
@@ -174,3 +174,28 @@ else:
 				ax.set_title('Density Plot')
 				plt.legend()
 				st.pyplot(fig)
+
+
+	else:
+		option = st.selectbox("Select Co-relation Type",['All Columns','Specific Column', 'Pair Plot'])
+		if option == "All Columns":
+			st.title("Co-relation with other columns")
+			st.table(stock_df.corr())
+
+			st.write('## Correlation Heatmap')
+			fig, ax = plt.subplots()
+			sns.heatmap(stock_df.corr(), annot=True, cmap='coolwarm', ax=ax)
+			st.pyplot(fig)
+
+		elif option == 'Specific Column':
+			options = ['buyprice', 'date', 'buytime', 'sl', 'type', 'stock', 'buyslpoints', 'tgt', 'buy1to1', 'buy1to2', 'buy1to3', 'buy1to4', 'buy1to5', 'buy1to6', 'buy1to7', 'buy1to8', 'buy1to9', 'sellprice', 'selltime', 'profit_or_loss', 'remarks', 'trail', 'sell1to1', 'sell1to2', 'sell1to3', 'sell1to4', 'sell1to5', 'sell1to6', 'sell1to7', 'sell1to8', 'sell1to9', 'sellslpoints', 'lot_size', 'day', 'month', 'nifty_open', 'nifty_prev_close', 'nifty_trend', 'trade_time', 'p&l']
+			column_option = st.selectbox("Select Column", options)
+			st.table(stock_df.corr()[str(column_option)])
+
+		else:
+			st.write('## Pair Plot')
+			fig = sns.pairplot(stock_df)
+			fig.savefig('pairplot.png')
+			img = Image.open('pairplot.png')
+			img_resized = img.resize((800, 800))
+			st.image(img_resized)
